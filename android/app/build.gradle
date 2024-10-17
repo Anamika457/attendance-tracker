@@ -12,20 +12,12 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode', '1') // default to '1' if not set
+def flutterVersionName = localProperties.getProperty('flutter.versionName', '1.0') // default to '1.0' if not set
 
 android {
     namespace "com.example.attendance_tracker"
-    compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 33 // Latest SDK version
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -41,21 +33,18 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.attendance_tracker"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        minSdkVersion 21
+        targetSdkVersion 33 // Target latest SDK version
+        versionCode flutterVersionCode.toInteger() // Get from local.properties or default to 1
+        versionName flutterVersionName // Get from local.properties or default to '1.0'
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug // For release build, ensure you configure signing properly
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
@@ -64,4 +53,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // Add any additional dependencies here, if needed.
+}
