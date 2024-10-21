@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:attendance_tracker/scanner.dart'; 
 
 void main() {
+   WidgetsFlutterBinding.ensureInitialized();
+  PaintingBinding.instance!.imageCache!.maximumSize = 100;
   runApp(const MyApp());
 }
 
@@ -11,60 +13,120 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Attendance Tracker',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        primaryColor: Colors.amber,
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+            color: Colors.amber,
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 18,
+            color: Colors.black,
+          ),
+        ),
       ),
-      home: const MyHomePage(title: 'Attendance Tracker'),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class _HomePageState extends State<HomePage> {
+  
+  String? selectedValue;
+  final List<String> dropdownItems = ['Session 1', 'Session 2', 'Session 3'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Colors.black,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Attendance Tracker',
+          style: TextStyle(
+            color: Colors.amber,
+            fontSize: 25,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-           
-            ElevatedButton(
-              onPressed: () {
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => QRScanPage()),
+            DropdownButton<String>(
+              value: selectedValue,
+              hint: const Text(
+                'Select Session',
+                style: TextStyle(color: Colors.amber, fontSize: 20),
+              ),
+              dropdownColor: Colors.black,
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.amber),
+              items: dropdownItems.map((String item) {
+                return DropdownMenuItem<String>(
+                  value: item,
+                  child: Text(
+                    item,
+                    style: const TextStyle(color: Colors.amber),
+                  ),
                 );
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  selectedValue = newValue;
+                });
               },
-              child: const Text('Go to QR Scanner'),
+            ),
+            const SizedBox(height: 120),
+            Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(20), 
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => QRScanPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber, 
+                  foregroundColor: Colors.black, 
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                 ),
+                ),
+                child: const Text(
+                  'Go to QR Scanner',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
       ),
-      
     );
   }
 }

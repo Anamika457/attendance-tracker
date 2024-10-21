@@ -1,3 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api, use_key_in_widget_constructors
+
+import 'package:attendance_tracker/confirmation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,27 +18,22 @@ class _QRScanPageState extends State<QRScanPage> {
   @override
   void initState() {
     super.initState();
-    _checkCameraPermission();  // Check permission when the page loads
+    _checkCameraPermission();  
   }
 
-  // Method to check and request camera permission
   Future<void> _checkCameraPermission() async {
     var status = await Permission.camera.status;
     if (!status.isGranted) {
-      // Request permission if not granted
+    
       if (await Permission.camera.request().isGranted) {
-        // Permission granted
         setState(() {
-          // Rebuild UI if permission granted to initialize QR scanner
         });
       } else {
-        // Permission denied, show a dialog
         _showPermissionDeniedDialog();
       }
     }
   }
 
-  // Show a dialog if permission is denied
   void _showPermissionDeniedDialog() {
     showDialog(
       context: context,
@@ -69,15 +67,21 @@ class _QRScanPageState extends State<QRScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Scan QR Code'),
+        iconTheme: const IconThemeData(
+    color: Colors.amber, 
+  ),
+        title: const Text('Scan QR Code', style: TextStyle(
+    color: Colors.amber
+  )),
+        backgroundColor: Colors.black,
       ),
       body: FutureBuilder(
         future: Permission.camera.status,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData && snapshot.data!.isGranted) {
-              // If permission is granted, show the QR scanner
               return Column(
                 children: <Widget>[
                   Expanded(
@@ -86,7 +90,7 @@ class _QRScanPageState extends State<QRScanPage> {
                       key: qrKey,
                       onQRViewCreated: _onQRViewCreated,
                       overlay: QrScannerOverlayShape(
-                        borderColor: Colors.red,
+                        borderColor: Colors.amber,
                         borderRadius: 10,
                         borderLength: 30,
                         borderWidth: 10,
@@ -98,20 +102,49 @@ class _QRScanPageState extends State<QRScanPage> {
                     flex: 1,
                     child: Center(
                       child: (result != null)
-                          ? Text('Data: ${result!.code}')
-                          : Text('Scan a code'),
+                          ? Text('Data: ${result!.code}', style: const TextStyle(
+                          color: Colors.amber, 
+                          fontSize: 20
+                        ))
+                          : const Text('Scan a code',style: TextStyle(
+                          color: Colors.amber,
+                          fontSize: 20
+                        )),
+                        
                     ),
-                  )
+                  ),
+                  ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ConfirmationPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber, 
+                  foregroundColor: Colors.black, 
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                 ),
+                ),
+                child: const Text(
+                  'Confirmation',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
                 ],
               );
             } else {
-              // If permission is not granted, show a message
-              return Center(
+              return const Center(
                 child: Text('Camera permission is required to scan QR codes.'),
               );
             }
           }
-          return Center(child: CircularProgressIndicator());  // Show loading indicator while waiting for permission status
+          return const Center(child: CircularProgressIndicator());  
         },
       ),
     );
