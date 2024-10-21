@@ -143,7 +143,7 @@ class _QRScanPageState extends State<QRScanPage> {
         result = scanData;
       });
       final response = await http.post(
-        Uri.http(apiUrl, '/track-attendance/'),
+        Uri.https(apiUrl, '/track-attendance/'),
         body:{
           'uuid':scanData.code,
           'session_id': widget.sessionId
