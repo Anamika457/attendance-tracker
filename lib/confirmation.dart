@@ -2,22 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:attendance_tracker/main.dart';
 
 class ConfirmationPage extends StatelessWidget {
-  const ConfirmationPage({super.key});
+  final String message;
+  final String name;
+  final String rollNo;
+  final String gender;
+  final String email;
+  final String sessionName;
+
+  const ConfirmationPage({super.key, 
+    required this.message,
+    required this.name,
+    required this.rollNo,
+    required this.gender,
+    required this.email,
+    required this.sessionName,
+  });
 
   @override
   Widget build(BuildContext context) {
-
-    String name = "John Doe";
-    String gender = "Male";
-    String session = "1";
-    String checkIn = "9:00 AM";
-    String checkOut = "5:00 PM";
-
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         iconTheme: const IconThemeData(
-          color: Colors.amber, 
+          color: Colors.amber,
         ),
         title: const Text(
           'Confirmation',
@@ -31,9 +38,8 @@ class ConfirmationPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            
               Card(
-                color: Colors.grey[850], 
+                color: Colors.grey[850],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -49,34 +55,39 @@ class ConfirmationPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
+                        'Roll No: $rollNo',
+                        style: const TextStyle(color: Colors.amber, fontSize: 20),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
                         'Gender: $gender',
                         style: const TextStyle(color: Colors.amber, fontSize: 20),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Session: $session',
+                        'Email: $email',
                         style: const TextStyle(color: Colors.amber, fontSize: 20),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Check-in: $checkIn',
+                        'Session: $sessionName',
+                        style: const TextStyle(color: Colors.amber, fontSize: 20),
+                      ),
+                      Text(
+                        'Status: $message',
                         style: const TextStyle(color: Colors.amber, fontSize: 20),
                       ),
                       const SizedBox(height: 10),
-                      Text(
-                        'Check-out: $checkOut',
-                        style: const TextStyle(color: Colors.amber, fontSize: 20),
-                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 40), 
+              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                    MaterialPageRoute(builder: (context) => const HomePage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

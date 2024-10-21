@@ -1,11 +1,19 @@
 // ignore_for_file: library_private_types_in_public_api, use_key_in_widget_constructors
 
+import 'dart:convert';
+
 import 'package:attendance_tracker/confirmation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:attendance_tracker/api_constants.dart';
 class QRScanPage extends StatefulWidget {
+
+  final String? sessionId;
+
+  const QRScanPage({required this.sessionId});
+
   @override
   _QRScanPageState createState() => _QRScanPageState();
 }
@@ -112,30 +120,7 @@ class _QRScanPageState extends State<QRScanPage> {
                         )),
                         
                     ),
-                  ),
-                  ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ConfirmationPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber, 
-                  foregroundColor: Colors.black, 
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                 ),
-                ),
-                child: const Text(
-                  'Confirmation',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                  )
                 ],
               );
             } else {
@@ -152,10 +137,44 @@ class _QRScanPageState extends State<QRScanPage> {
 
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) async{
+
       setState(() {
         result = scanData;
       });
+      final response = await http.post(
+        Uri.http(apiUrl, '/track-attendance/'),
+        body:{
+          'uuid':scanData.code,
+          'session_id': widget.sessionId
+        }
+      );
+      if (!mounted) return;
+      print("=====================================================================================================================");
+      print(response.body);
+      print("=====================================================================================================================");
+      final data = jsonDecode(response.body);
+      final String message = data['message'];
+      final attendee = data['attendee'];
+      final String name = attendee['name'];
+      final String rollNo = attendee['roll_no'];
+      final String gender = attendee['gender'];
+      final String email = attendee['email'];
+      final String sessionName = data['session']['name'];
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ConfirmationPage(
+            message: message,
+            name: name,
+            rollNo: rollNo,
+            gender: gender,
+            email: email,
+            sessionName: sessionName,
+          ),
+        ),
+      );
     });
   }
 

@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -42,9 +43,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   String? selectedValue;
-  final List<String> dropdownItems = ['Session 1', 'Session 2', 'Session 3'];
+
+  final Map<String, String> sessionMap = {
+    'Session 1': '1',
+    'Session 2': '2',
+    'Session 3': '3',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               ),
               dropdownColor: Colors.black,
               icon: const Icon(Icons.arrow_drop_down, color: Colors.amber),
-              items: dropdownItems.map((String item) {
+              items: sessionMap.keys.map((String item) {
                 return DropdownMenuItem<String>(
                   value: item,
                   child: Text(
@@ -98,22 +103,28 @@ class _HomePageState extends State<HomePage> {
                     offset: const Offset(0, 5),
                   ),
                 ],
-                borderRadius: BorderRadius.circular(20), 
+                borderRadius: BorderRadius.circular(20),
               ),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => QRScanPage()),
-                  );
-                },
+                onPressed: selectedValue != null
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QRScanPage(
+                              sessionId: sessionMap[selectedValue!]!,
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber, 
-                  foregroundColor: Colors.black, 
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                 ),
+                  ),
                 ),
                 child: const Text(
                   'Go to QR Scanner',

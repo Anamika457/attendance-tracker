@@ -12,7 +12,8 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|density|layoutDirection"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
-             android:exported="true"> 
+             android:exported="true"
+             android:screenOrientation="portrait"> 
             <meta-data
                 android:name="flutterEmbedding"
                 android:value="2" />
